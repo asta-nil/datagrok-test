@@ -58,7 +58,7 @@ jobs:
   health_check:
     name: "Healthcheck each app"
     runs-on: ubuntu-latest
-    needs: Deploy
+    needs: Build_and_push
     strategy:
       matrix:
         REQUEST: ["http://localhost:8081/heath-check", "http://localhost:8082/heath-check"]
