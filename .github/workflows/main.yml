@@ -28,7 +28,7 @@ jobs:
     needs: Lint
     strategy:
       matrix:
-        REQUEST: ["http://localhost/health-check:5002", "http://localhost/health-check:5002"]
+        REQUEST: ["http://localhost/health-check:5001", "http://localhost/health-check:5002"]
     steps:
       - name: Git-checkout
         uses: actions/checkout@v4
@@ -40,9 +40,10 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build docker-compose
-        run: |
-          docker compose up -d --no-deps
-          curl -f ${{ matrix.REQUEST }}
+        run: docker compose up -d --no-deps
+
+      - name: Health-check
+        run: curl -f ${{ matrix.REQUEST }}
           
 
       - name: Push first
