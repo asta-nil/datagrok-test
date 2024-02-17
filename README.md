@@ -14,5 +14,6 @@ To start the app ypu need to enter
 docker compose up
 ```
 while being in root folder
+
 Apps are collecting metrics such as: cpu, memory, disk usage, network usage and outputting them in json format.
 Also apps have health-check endpoints, you can find it on route `http://localhost/health-check:5001` for app1 or `http://localhost/health-check:5002`.
