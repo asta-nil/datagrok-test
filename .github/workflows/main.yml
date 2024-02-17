@@ -1,0 +1,68 @@
+name: CI/CD
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    name: Lint
+    steps:
+      - name: Git-checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Lint flake8
+        uses: py-actions/flake8@v2
+
+  build_and_push:
+    runs-on: ubuntu-latest
+    name: Build_and_push
+    needs: Lint
+    steps:
+      - name: Git-checkout
+        uses: actions/checkout@v4
+
+      - name: Docker hub login
+        uses: docker/login-action@v3
+        with: 
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build docker-compose
+        run: docker-compose up -d --no-deps
+        
+      - name: Push first
+        uses: docker/build-push-action@v3
+        with:
+          context: ./first-app
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}:latest
+
+      - name: Push second
+        uses: docker/build-push-action@v3
+        with:
+          context: ./second-app
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}:latest
+
+  health_check:
+    name: "Healthcheck each app"
+    runs-on: ubuntu-latest
+    needs: Deploy
+    strategy:
+      matrix:
+        REQUEST: ["http://localhost:8081/heath-check", "http://localhost:8082/heath-check"]
+    steps:
+      - name: "Call API"
+        run:
+          curl -s -I ${{ matrix.REQUEST }} -X GET
