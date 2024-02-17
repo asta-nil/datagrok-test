@@ -37,7 +37,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build docker-compose
-        run: docker-compose up -d --no-deps
+        run: docker compose up -d --no-deps
         
       - name: Push first
         uses: docker/build-push-action@v3
@@ -63,6 +63,10 @@ jobs:
       matrix:
         REQUEST: ["http://localhost:5001/heath-check", "http://localhost:5002/heath-check"]
     steps:
+      - name: Git-checkout
+        uses: actions/checkout@v4
+
       - name: "Call API"
         run:
+          docker compose up -d --no-deps
           curl -s -I ${{ matrix.REQUEST }} -X GET
