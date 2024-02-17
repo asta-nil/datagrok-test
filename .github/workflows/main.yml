@@ -45,7 +45,7 @@ jobs:
           context: ./first-app
           push: true
           tags: |
-            ${{ env.REGISTRY }}:latest
+            astanil/first_app:latest
 
       - name: Push second
         uses: docker/build-push-action@v3
@@ -53,7 +53,7 @@ jobs:
           context: ./second-app
           push: true
           tags: |
-            ${{ env.REGISTRY }}:latest
+            astanil/second_app:latest
 
   health_check:
     name: "Healthcheck each app"
@@ -61,7 +61,7 @@ jobs:
     needs: Build_and_push
     strategy:
       matrix:
-        REQUEST: ["http://localhost:8081/heath-check", "http://localhost:8082/heath-check"]
+        REQUEST: ["http://localhost:5001/heath-check", "http://localhost:5002/heath-check"]
     steps:
       - name: "Call API"
         run:
