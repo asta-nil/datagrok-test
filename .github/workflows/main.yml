@@ -44,7 +44,7 @@ jobs:
         
       - name: "Call health check"
         run:
-          curl -s -I ${{ matrix.REQUEST }} -X GET
+          curl -f ${{ matrix.REQUEST }}
 
       - name: Push first
         uses: docker/build-push-action@v3
@@ -61,4 +61,3 @@ jobs:
           push: true
           tags: |
             astanil/second_app:latest
-            
