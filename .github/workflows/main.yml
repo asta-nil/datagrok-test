@@ -26,6 +26,9 @@ jobs:
     runs-on: ubuntu-latest
     name: Build_and_push
     needs: Lint
+    strategy:
+      matrix:
+        REQUEST: ["http://localhost:5001/heath-check", "http://localhost:5002/heath-check"]
     steps:
       - name: Git-checkout
         uses: actions/checkout@v4
@@ -39,6 +42,10 @@ jobs:
       - name: Build docker-compose
         run: docker compose up -d --no-deps
         
+      - name: "Call health check"
+        run:
+          curl -s -I ${{ matrix.REQUEST }} -X GET
+
       - name: Push first
         uses: docker/build-push-action@v3
         with:
@@ -54,19 +61,4 @@ jobs:
           push: true
           tags: |
             astanil/second_app:latest
-
-  health_check:
-    name: "Healthcheck each app"
-    runs-on: ubuntu-latest
-    needs: Build_and_push
-    strategy:
-      matrix:
-        REQUEST: ["http://localhost:5001/heath-check", "http://localhost:5002/heath-check"]
-    steps:
-      - name: Git-checkout
-        uses: actions/checkout@v4
-
-      - name: "Call API"
-        run:
-          docker compose up -d --no-deps
-          curl -s -I ${{ matrix.REQUEST }} -X GET
+            
