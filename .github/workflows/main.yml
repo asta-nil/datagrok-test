@@ -40,11 +40,10 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build docker-compose
-        run: docker compose up -d --no-deps
-        
-      - name: "Call health check"
-        run:
+        run: |
+          docker compose up -d --no-deps
           curl -f ${{ matrix.REQUEST }}
+          
 
       - name: Push first
         uses: docker/build-push-action@v3
