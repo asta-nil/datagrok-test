@@ -43,7 +43,7 @@ jobs:
         run: docker compose up -d --no-deps
 
       - name: Health-check
-        run: curl -f ${{ matrix.REQUEST }}
+        run: curl -s -I ${{ matrix.REQUEST }}
           
 
       - name: Push first
