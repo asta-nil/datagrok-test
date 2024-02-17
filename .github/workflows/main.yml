@@ -28,7 +28,7 @@ jobs:
     needs: Lint
     strategy:
       matrix:
-        REQUEST: ["http://localhost:5001/heath-check", "http://localhost:5002/heath-check"]
+        REQUEST: ["http://localhost/health-check:5002", "http://localhost/health-check:5002"]
     steps:
       - name: Git-checkout
         uses: actions/checkout@v4
